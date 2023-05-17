@@ -1,1 +1,6 @@
-<h1>Hello World</h1>
+<script>
+	import Router from 'svelte-spa-router';
+	import { routes } from './routes.js';
+</script>
+
+<Router {routes} />
