@@ -5,6 +5,10 @@ class TaxSquare extends Square {
     super("Tax Square")
     this.taxAmount = taxAmount
   }
+
+  getTaxAmount() {
+    return this.taxAmount
+  }
 }
 
 export default TaxSquare
