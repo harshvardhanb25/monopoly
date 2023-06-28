@@ -1,3 +1,16 @@
-html, body {
-    font-family: var(--font-family)
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
+
+html, body, * {
+    font-family: 'Baloo 2', cursive !important;
+}
+
+article {
+    box-sizing: border-box;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6, p, strong {    
+    margin: 0;
+    padding: 0;
+    line-height: normal;
 }
