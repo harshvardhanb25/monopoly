@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full Game</title>
+
+</head>
+<body>
+    <h1>Test Game</h1>
+    <!-- This will just be a window with a simple div which will be modified in place constantly by java script-->
+    <div id="game">
+        <div id="board"></div>
+        <div id="game-info"></div>
+        <div id="game-controls">
+            <button id="undo">Undo</button>
+            <button id="redo">Redo</button>
+            <button id="reset">Reset</button>
+        </div>
+    </div>
+
+    <script type="module" src="Full.js"></script>
+    <script>
+        const full = new Full();
+        // Use the full object to interact with the game
+        full.singleTurnGame();
+    </script>
+</body>
+</html>

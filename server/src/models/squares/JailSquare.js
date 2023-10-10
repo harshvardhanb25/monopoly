@@ -1,7 +1,7 @@
 import Square from './Square';
 
 class JailSquare extends Square {
-  constructor(name) {
+  constructor() {
     super("Jail");
   }
 }

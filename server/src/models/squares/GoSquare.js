@@ -1,8 +1,13 @@
 import Square from './Square';
 
 class GoSquare extends Square {
-  constructor() {
+  constructor(payAmount) {
     super("Go");
+    this.payAmount = payAmount;
+  }
+
+  getPayAmount() {
+    return this.payAmount;
   }
 }
 
