@@ -7,6 +7,10 @@ class Card {
     applyAction(player) {
         this.action(player)
     }
+
+    getDescription() {
+        return this.description
+    }
 }
 
 class MultiPlayerCard extends Card {

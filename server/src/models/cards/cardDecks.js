@@ -1,9 +1,9 @@
-import { Card,  MultiPlayerCard } from "./Card"
-import CardDeck from "./CardDeck"
+import { Card,  MultiPlayerCard } from "./Card.js"
+import CardDeck from "./CardDeck.js"
 
 function genCardArrays() {
-    chanceCardDeck = []
-    communityChestCardDeck = []
+    let chanceCardDeck = []
+    let communityChestCardDeck = []
 
     // Common actions and cards
 
@@ -44,7 +44,7 @@ function genCardArrays() {
     chanceCardDeck.push(
         new Card("Get Out of Jail Free", getOutOfJailFreeAction)
     )
-    communityChestCardDeck(
+    communityChestCardDeck.push(
         new Card("Get Out of Jail Free", getOutOfJailFreeAction)
     )
 
@@ -57,18 +57,19 @@ function genCardArrays() {
         }
         player.setPosition(24)
     }
-    chanceCardDeck.push(
-        new Card(
-            "Advance to Illinois Avenue. If you pass Go, collect $200",
-            advanceToIllinoisAveAction
-        )
-    )
 
     const advanceToBoardwalkAction = (player) => {
         player.setPosition(39)
     }
     chanceCardDeck.push(
         new Card("Advance to Boardwalk", advanceToBoardwalkAction)
+    )
+
+    chanceCardDeck.push(
+        new Card(
+            "Advance to Illinois Avenue. If you pass Go, collect $200",
+            advanceToIllinoisAveAction
+        )
     )
 
     const advanceToStCharlesPlaceAction = (player) => {
@@ -104,7 +105,14 @@ function genCardArrays() {
     }
     chanceCardDeck.push(
         new Card(
-            "Advance to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay wonder twice the rental to which they are otherwise entitled",
+            "Advance to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay owner twice the rental to which they are otherwise entitled",
+            advanceToNearestRailroadAction
+        )
+    )
+    // This is not a mistake, there's two of these cards
+    chanceCardDeck.push(
+        new Card(
+            "Advance to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay owner twice the rental to which they are otherwise entitled",
             advanceToNearestRailroadAction
         )
     )
@@ -334,11 +342,11 @@ function genCardArrays() {
 
 function getActionCardDecks() {
     const { chanceCardArray, communityChestCardArray } = genCardArrays()
-    const chanceCardDeck = new CardDeck(chanceCardDeck)
-    const communityChestCardDeck = new CardDeck(communityChestCardDeck)
+    const chanceCardDeck = new CardDeck(chanceCardArray)
+    const communityChestCardDeck = new CardDeck(communityChestCardArray)
     chanceCardDeck.shuffle()
     communityChestCardDeck.shuffle()
-    return { chanceCardDeck, communityChestCardDeck }
+    return [ chanceCardDeck, communityChestCardDeck ]
 }
 
 export { getActionCardDecks }

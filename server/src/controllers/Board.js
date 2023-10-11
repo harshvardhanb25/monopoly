@@ -3,28 +3,28 @@
  * It keeps track of properties, ownership, mortgaged properties,
  * and manages the current state of the board
  */
-import Player from "../models/players/Player"
-import { genSquares } from "../models/squares/squares"
-import { roll } from "../middlewares/dice-roll"
+import Player from "../models/players/Player.js"
+import { genSquares } from "../models/squares/squares.js"
+import { roll } from "../middlewares/dice-roll.js"
 import {
     ActionSquare,
     ChanceSquare,
     CommunityChestSquare,
-} from "../models/squares/ActionSquare"
-import FreeParkingSquare from "../models/squares/FreeParkingSquare"
-import GoSquare from "../models/squares/GoSquare"
-import GoToJailSquare from "./squares/GoToJailSquare"
-import JailSquare from "../models/squares/JailSquare"
-import PropertySquare from "../models/squares/PropertySquare"
-import TaxSquare from "../models/squares/TaxSquare"
-import { getActionCardDecks } from "../models/cards/cardDecks"
+} from "../models/squares/ActionSquare.js"
+import FreeParkingSquare from "../models/squares/FreeParkingSquare.js"
+import GoSquare from "../models/squares/GoSquare.js"
+import GoToJailSquare from "../models/squares/GoToJailSquare.js"
+import JailSquare from "../models/squares/JailSquare.js"
+import PropertySquare from "../models/squares/PropertySquare.js"
+import TaxSquare from "../models/squares/TaxSquare.js"
+import { getActionCardDecks } from "../models/cards/cardDecks.js"
 
 class Board {
     constructor(numPlayers) {
         this.squares = genSquares()
         this.players = this.initPlayers(numPlayers)
-        this.currentPlayer = selectRandomPlayer(this.players)
-        const { chanceDeck, communityChestDeck } = getActionCardDecks()
+        this.currentPlayer = this.selectRandomPlayer(this.players)
+        let [ chanceDeck, communityChestDeck ] = getActionCardDecks()
         this.chanceDeck = chanceDeck
         this.communityChestDeck = communityChestDeck
     }
@@ -51,9 +51,12 @@ class Board {
         // We then check the square the player landed on
         // and perform the appropriate action
         const playerRoll = roll()
-
-        this.movePlayer(playerRoll["total"])
+        this.movePlayer(playerRoll)
         const square = this.squares[this.currentPlayer.getPosition()]
+        console.log("Player rolled a ")
+        console.log(playerRoll)
+        console.log("and landed on")
+        console.log(square)
 
         // Appropriate actions for the square the player is on
         this.handlePlayerLanding(square)
@@ -134,9 +137,9 @@ class Board {
         // We need to check the type of action square
         // and perform the appropriate action
         if (square instanceof ChanceSquare) {
-            applyCardAction(this.communityChestDeck.drawCard())
+            this.applyCardAction(this.communityChestDeck.drawCard())
         } else if (square instanceof CommunityChestSquare) {
-            applyCardAction(this.communityChestDeck.drawCard())
+            this.applyCardAction(this.communityChestDeck.drawCard())
         } else {
             throw new Error("Invalid action square type")
         }
@@ -247,3 +250,5 @@ class Board {
     }
 
 }
+
+export default Board;

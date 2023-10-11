@@ -1,7 +1,7 @@
 // Create all the properties for the properties in monopoly
 
-import Property from "./Property"
-import { Color } from "./colors"
+import Property from "./Property.js"
+import { Color } from "./colors.js"
 
 export function genProperties() {
     const properties = [

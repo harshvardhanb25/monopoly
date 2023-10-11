@@ -3,6 +3,8 @@
  * It represents a property in monopoly.
  * It keeps track of the property's name, price, rent, and owner.
  */
+import { Color } from "./colors.js"
+
 class Property {
     constructor(name, price, rentTiers, color) {
         this.name = name

@@ -1,4 +1,4 @@
-import Square from "./Square"
+import Square from "./Square.js"
 
 class PropertySquare extends Square {
   constructor(property) {

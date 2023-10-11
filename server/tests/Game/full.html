@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="full.css">
     <title>Full Game</title>
 
 </head>
@@ -10,20 +11,29 @@
     <h1>Test Game</h1>
     <!-- This will just be a window with a simple div which will be modified in place constantly by java script-->
     <div id="game">
-        <div id="board"></div>
-        <div id="game-info"></div>
         <div id="game-controls">
-            <button id="undo">Undo</button>
-            <button id="redo">Redo</button>
-            <button id="reset">Reset</button>
+            <button id="new-game">Start a new Game</button>
         </div>
+        <div id="board">
+            Click the button to start a new game
+        </div>
+        <div id="game-info"></div>
     </div>
 
-    <script type="module" src="Full.js"></script>
-    <script>
+    <!-- <script type="module" src="Full.js"></script> -->
+    <script type="module">
+        import Full from './Full.js';
+
         const full = new Full();
         // Use the full object to interact with the game
-        full.singleTurnGame();
+        
+        document.getElementById('game').addEventListener('click', function(event) {
+            if (event.target.id === 'new-game') {
+                full.createGame();
+                console.log("Clicked");
+            }
+        });
+
     </script>
 </body>
 </html>
