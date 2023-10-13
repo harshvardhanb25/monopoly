@@ -1,4 +1,4 @@
-import Board from "../../src/controllers/Board.js"
+import Board from "../../src/models/board/Board.js"
 import PropertySquare from "../../src/models/squares/PropertySquare.js"
 import TaxSquare from "../../src/models/squares/TaxSquare.js"
 import GoSquare from "../../src/models/squares/GoSquare.js"
@@ -11,17 +11,7 @@ class Full {
         
         console.log("Board created");
 
-        // Get the board div from the html
-        let boardDiv = document.getElementById("board");
-        // Set the board div's inner html to the squares html
-        let squareHtml = this.getSquaresHtml(board);
-        boardDiv.innerHTML = squareHtml;
-
-        // Get the game info div from the html
-        let gameInfoDiv = document.getElementById("game-info");
-        // Set the game info div's inner html to the game info html
-        let gameInfoHtml = this.getGameInfoHtml(board);
-        gameInfoDiv.innerHTML = gameInfoHtml;
+        this.refreshGame(board);
 
         // Provide Game controls
         let gameControlsDiv = document.getElementById("game-controls");
@@ -33,8 +23,24 @@ class Full {
         let rollDiceButton = document.getElementById("play-turn");
         rollDiceButton.addEventListener("click", () => {
             board.playerTurn();
+            this.refreshGame(board);
         });
+        
 
+    }
+
+    refreshGame(board) {
+        // Get the board div from the html
+        let boardDiv = document.getElementById("board");
+        // Set the board div's inner html to the squares html
+        let squareHtml = this.getSquaresHtml(board);
+        boardDiv.innerHTML = squareHtml;
+
+        // Get the game info div from the html
+        let gameInfoDiv = document.getElementById("game-info");
+        // Set the game info div's inner html to the game info html
+        let gameInfoHtml = this.getGameInfoHtml(board);
+        gameInfoDiv.innerHTML = gameInfoHtml;
     }
 
     getSquaresHtml(board) {

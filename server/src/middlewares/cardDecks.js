@@ -1,5 +1,5 @@
-import { Card,  MultiPlayerCard } from "./Card.js"
-import CardDeck from "./CardDeck.js"
+import { Card,  MultiPlayerCard } from "../models/cards/Card.js"
+import CardDeck from "../models/cards/CardDeck.js"
 
 function genCardArrays() {
     let chanceCardDeck = []
@@ -11,6 +11,7 @@ function genCardArrays() {
         player.setPosition(0)
         // Collect $200
         player.setBalance(player.getBalance() + 200)
+        notifyPosition() // TODO, fix imports and valid and pass board as argument
     }
     chanceCardDeck.push(
         new Card("Advance to Go (Collect $200)", advanceToGoAction)
@@ -22,6 +23,7 @@ function genCardArrays() {
     const goToJailAction = (player) => {
         player.setPosition(10)
         player.setJailStatus(true)
+        notifyPosition() // TODO, fix imports and valid and pass board as argument
     }
 
     chanceCardDeck.push(
@@ -54,12 +56,19 @@ function genCardArrays() {
         // If you pass go, collect $200
         if (player.getPosition() > 24) {
             player.setBalance(player.getBalance() + 200)
+            notifyPayment(200, null, player) // TODO, fix imports and valid and pass board as argument
         }
         player.setPosition(24)
+        notifyPosition() // TODO, fix imports and valid and pass board as argument
+
+        // TODO handle rent payment or propety purchase
     }
 
     const advanceToBoardwalkAction = (player) => {
         player.setPosition(39)
+        notifyPosition() // TODO, fix imports and valid and pass board as argument
+
+        // TODO handle rent payment or propety purchase
     }
     chanceCardDeck.push(
         new Card("Advance to Boardwalk", advanceToBoardwalkAction)
@@ -76,8 +85,12 @@ function genCardArrays() {
         // If you pass go, collect $200
         if (player.getPosition() > 11) {
             player.setBalance(player.getBalance() + 200)
+            notifyPayment(200, null, player) // TODO, fix imports and valid and pass board as argument
         }
         player.setPosition(11)
+        notifyPosition() // TODO, fix imports and valid and pass board as argument
+
+        // TODO handle rent payment or propety purchase
     }
     chanceCardDeck.push(
         new Card(
@@ -99,7 +112,11 @@ function genCardArrays() {
             player.setPosition(5)
             // Passing go
             player.setBalance(player.getBalance() + 200)
+            notifyPayment(200, null, player) // TODO, fix imports and valid and pass board as argument
         }
+        notifyPosition() // TODO, fix imports and valid and pass board as argument
+        
+        // TODO handle rent payment or propety purchase
         // TODO: Pay double rent if owned
         // Add rent modifier to double rent
     }
@@ -109,7 +126,7 @@ function genCardArrays() {
             advanceToNearestRailroadAction
         )
     )
-    // This is not a mistake, there's two of these cards
+    // This is not a mistake, there's two of these cards in the chance card deck for some reason
     chanceCardDeck.push(
         new Card(
             "Advance to the nearest Railroad. If unowned, you may buy it from the Bank. If owned, pay owner twice the rental to which they are otherwise entitled",
@@ -126,7 +143,10 @@ function genCardArrays() {
             player.setPosition(12)
             // Passing go
             player.setBalance(player.getBalance() + 200)
+            notifyPayment(200, null, player) // TODO, fix imports and valid and pass board as argument
         }
+        notifyPosition() // TODO, fix imports and valid and pass board as argument
+        // TODO handle rent payment or propety purchase
         // TODO: Pay double rent if owned
         // Add rent modifier to double rent
     }
@@ -139,6 +159,7 @@ function genCardArrays() {
 
     const bankPaysYouDividendAction = (player) => {
         player.setBalance(player.getBalance() + 50)
+        notifyPayment(50, null, player) // TODO, fix imports and valid and pass board as argument
     }
     chanceCardDeck.push(
         new Card("Bank pays you dividend of $50", bankPaysYouDividendAction)
@@ -146,20 +167,26 @@ function genCardArrays() {
 
     const goBackThreeSpacesAction = (player) => {
         player.setPosition(player.getPosition() - 3)
+        notifyPosition() // TODO, fix imports and valid and pass board as argument
+
+        // Handle sqaure landing action
+        // Technically the kind of sqare is already known, but we don't want to
+        // duplicate code, so we just call the handlePlayerLanding function
     }
     chanceCardDeck.push(new Card("Go back 3 spaces", goBackThreeSpacesAction))
 
     const makeGeneralRepairsAction = (player) => {
         // For each house $25, for each hotel $100
+        let totalCost = 0;
         player.getProperties().forEach((p) => {
             if (p.getNumBuildings() === 5) {
-                player.setBalance(player.getBalance() - 100)
+                total += 100
             } else {
-                player.setBalance(
-                    player.getBalance() - 25 * p.getNumBuildings()
-                )
+                total += 25 * p.getNumBuildings()
             }
         })
+        player.setBalance(player.getBalance() - totalCost)
+        notifyPayment(totalCost, player, null) // TODO, fix imports and valid and pass board as argument
     }
     chanceCardDeck.push(
         new Card(
@@ -170,6 +197,7 @@ function genCardArrays() {
 
     const speedingFineAction = (player) => {
         player.setBalance(player.getBalance() - 15)
+        notifyPayment(15, player, null) // TODO, fix imports and valid and pass board as argument
     }
     chanceCardDeck.push(new Card("Speeding fine $15", speedingFineAction))
 
@@ -177,8 +205,12 @@ function genCardArrays() {
         // If pass go collect $200
         if (player.getPosition() > 5) {
             player.setBalance(player.getBalance() + 200)
+            notifyPayment(200, null, player) // TODO, fix imports and valid and pass board as argument
         }
         player.setPosition(5)
+        notifyPosition() // TODO, fix imports and valid and pass board as argument
+
+        // TODO handle rent payment or propety purchase
     }
     chanceCardDeck.push(
         new Card(
@@ -193,6 +225,7 @@ function genCardArrays() {
             if (p !== player) {
                 p.setBalance(p.getBalance() + 50)
             }
+            notifyPayment(50, player, p) // TODO, fix imports and valid and pass board as argument
         })
         player.setBalance(player.getBalance() - 50 * (otherplayers.length - 1))
     }
@@ -205,6 +238,7 @@ function genCardArrays() {
 
     const buildingAndLoanMaturesAction = (player) => {
         player.setBalance(player.getBalance() + 150)
+        notifyPayment(150, null, player) // TODO, fix imports and valid and pass board as argument
     }
     chanceCardDeck.push(
         new Card(
@@ -217,6 +251,7 @@ function genCardArrays() {
 
     const bankErrorInYourFavorAction = (player) => {
         player.setBalance(player.getBalance() + 200)
+        notifyPayment(200, null, player) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card(
@@ -227,6 +262,7 @@ function genCardArrays() {
 
     const doctorsFeeAction = (player) => {
         player.setBalance(player.getBalance() - 50)
+        notifyPayment(50, player, null) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card("Doctor's fee. Pay $50", doctorsFeeAction)
@@ -234,6 +270,7 @@ function genCardArrays() {
 
     const saleOfStockAction = (player) => {
         player.setBalance(player.getBalance() + 50)
+        notifyPayment(50, null, player) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card("From sale of stock you get $50", saleOfStockAction)
@@ -241,6 +278,7 @@ function genCardArrays() {
 
     const holidayFundMaturesAction = (player) => {
         player.setBalance(player.getBalance() + 100)
+        notifyPayment(100, null, player) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card("Holiday Fund matures. Receive $100", holidayFundMaturesAction)
@@ -248,6 +286,7 @@ function genCardArrays() {
 
     const incomeTaxRefundAction = (player) => {
         player.setBalance(player.getBalance() + 20)
+        notifyPayment(20, null, player) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card("Income tax refund. Collect $20", incomeTaxRefundAction)
@@ -259,6 +298,7 @@ function genCardArrays() {
             if (p !== player) {
                 p.setBalance(p.getBalance() - 10)
             }
+            notifyPayment(10, p, player) // TODO, fix imports and valid and pass board as argument
         })
         player.setBalance(player.getBalance() + 10 * (otherplayers.length - 1))
     }
@@ -271,6 +311,7 @@ function genCardArrays() {
 
     const lifeInsuranceMaturesAction = (player) => {
         player.setBalance(player.getBalance() + 100)
+        notifyPayment(100, null, player) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card(
@@ -281,6 +322,7 @@ function genCardArrays() {
 
     const hospitalFeesAction = (player) => {
         player.setBalance(player.getBalance() - 100)
+        notifyPayment(100, player, null) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card("Pay hospital fees of $100", hospitalFeesAction)
@@ -288,6 +330,7 @@ function genCardArrays() {
 
     const schoolFeesAction = (player) => {
         player.setBalance(player.getBalance() - 50)
+        notifyPayment(50, player, null) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card("Pay school fees of $50", schoolFeesAction)
@@ -295,6 +338,7 @@ function genCardArrays() {
 
     const receiveConsultancyFeeAction = (player) => {
         player.setBalance(player.getBalance() + 25)
+        notifyPayment(25, null, player) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card("Receive $25 consultancy fee", receiveConsultancyFeeAction)
@@ -302,15 +346,16 @@ function genCardArrays() {
 
     const streetRepairsAction = (player) => {
         // For each house $40, for each hotel $115
+        let totalCost = 0;
         player.getProperties().forEach((p) => {
             if (p.getNumBuildings() === 5) {
-                player.setBalance(player.getBalance() - 115)
+                total += 115
             } else {
-                player.setBalance(
-                    player.getBalance() - 40 * p.getNumBuildings()
-                )
+                total += 40 * p.getNumBuildings()
             }
         })
+        player.setBalance(player.getBalance() - totalCost)
+        notifyPayment(totalCost, player, null) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card(
@@ -321,6 +366,7 @@ function genCardArrays() {
 
     const beautyContestAction = (player) => {
         player.setBalance(player.getBalance() + 10)
+        notifyPayment(10, null, player) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(
         new Card(
@@ -331,6 +377,7 @@ function genCardArrays() {
 
     const inheritAction = (player) => {
         player.setBalance(player.getBalance() + 100)
+        notifyPayment(100, null, player) // TODO, fix imports and valid and pass board as argument
     }
     communityChestCardDeck.push(new Card("You inherit $100", inheritAction))
 
