@@ -18,7 +18,8 @@ import JailSquare from "../squares/JailSquare.js"
 import PropertySquare from "../squares/PropertySquare.js"
 import TaxSquare from "../squares/TaxSquare.js"
 import { getActionCardDecks } from "../../middlewares/cardDecks.js"
-
+import { Card, MultiPlayerCard } from "../cards/Card.js"
+import Controller from "../../controllers/Controller.js"
 class Board {
     constructor(numPlayers) {
         this.squares = genSquares()
@@ -27,8 +28,14 @@ class Board {
         let [ chanceDeck, communityChestDeck ] = getActionCardDecks()
         this.chanceDeck = chanceDeck
         this.communityChestDeck = communityChestDeck
+
+        this.controller = null;
     }
 
+    // Update controller
+    updateController(controller) {
+        this.controller = controller;
+    }
 
     initPlayers(numPlayers) {
         // Initialize players
@@ -52,7 +59,8 @@ class Board {
         // and perform the appropriate action
         const playerRoll = roll()
         // Synchrously call the controller so it can inform the view of the roll
-        notifyRoll(playerRoll)
+        this.controller.notifyRoll(playerRoll)
+        // console.log(playerRoll)
 
         this.movePlayer(playerRoll)
         const square = this.squares[this.currentPlayer.getPosition()]
@@ -61,7 +69,7 @@ class Board {
         this.handlePlayerLanding(square)
 
         // Handle interactive events such as mortgaging, building, trading, etc.
-        promtPlayerActions()
+        this.controller.promtPlayerActions()
 
         // Check if the player rolled doubles
         // If the player rolled doubles, we need to roll again
@@ -80,16 +88,15 @@ class Board {
         // Move the player by the number of spaces rolled
         // We need to check if the player passed go
         // If the player passed go, we need to give the player $200
-        const newPosition = this.currentPlayer.getPosition() + roll.total
+        const oldPosition = this.currentPlayer.getPosition()
+        const newPosition = oldPosition + roll.total
         if (newPosition >= this.squares.length) {
             this.currentPlayer.setBalance(this.currentPlayer.getBalance() + 200)
         }
         this.currentPlayer.setPosition(newPosition % this.squares.length)
 
         // Notify the view of the player's new position
-        notifyPosition() // No arguments because we just update all players' 
-                         // positions at once, and the view can just get query the board again
-                         // or do nothing, whatever, we don't care, its the view's job
+        this.controller.notifyPosition(oldPosition)
     }
 
     handlePlayerLanding(square) {
@@ -120,7 +127,7 @@ class Board {
         // If the property is not owned, we need to give the player the option to buy the property
         const property = square.getProperty()
         if (property.getOwner() === null) {
-            promptPurchaseOrAuction(property, this.currentPlayer) // View will call model back 
+            this.controller.promptPurchaseOrAuction(property, this.currentPlayer) // View will call model back 
                                                         // with who bought it and at what amount
         } else if (property.getOwner() === this.currentPlayer) {
             // Do nothing
@@ -134,7 +141,7 @@ class Board {
                 this.currentPlayer.getBalance() - rent
             )
             property.getOwner().setBalance(property.getOwner().getBalance() + rent)
-            notifyPayment(rent, this.currentPlayer, property.getOwner())
+            this.controller.notifyPayment(rent, this.currentPlayer, property.getOwner())
         }
     }
 
@@ -144,18 +151,18 @@ class Board {
         // and perform the appropriate action
         if (square instanceof ChanceSquare) {
             let drawnCard = this.chanceDeck.drawCard()
-            notifyCardDrawn(drawnCard)
+            this.controller.notifyCardDrawn(drawnCard)
             this.applyCardAction(drawnCard)
         } else if (square instanceof CommunityChestSquare) {
             let drawnCard = this.communityChestDeck.drawCard()
-            notifyCardDrawn(drawnCard)
+            this.controller.notifyCardDrawn(drawnCard)
             this.applyCardAction(drawnCard)
         } else {
             throw new Error("Invalid action square type")
         }
     }
     
-    applyCardAction(card) {
+    applyCardAction(drawnCard) {
         // Apply the action of the card
         if (drawnCard instanceof MultiPlayerCard) {
             // Filter out this player 
